@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outlier Noise — Tickets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a0a0a;
+    --paper:#f2ece2;
+    --punk-pink:#f0a8c4;
+    --hot-pink:#ff3d7f;
+    --grey:#7a7a7a;
+    --line:#2b2b2b;
+  }
+
+  *{box-sizing:border-box;}
+
+  html,body{
+    margin:0;
+    padding:0;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Space Mono', monospace;
+    min-height:100vh;
+  }
+
+  body{
+    position:relative;
+    display:flex;
+    justify-content:center;
+    padding:56px 20px 80px;
+    overflow-x:hidden;
+  }
+
+  /* halftone / grain signature backdrop */
+  .grain{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:0.35;
+    mix-blend-mode:overlay;
+    background-image:radial-gradient(circle, rgba(240,168,196,0.5) 1px, transparent 1px);
+    background-size:4px 4px;
+    animation:drift 12s linear infinite;
+    z-index:0;
+  }
+  @keyframes drift{
+    0%{background-position:0 0;}
+    100%{background-position:80px 60px;}
+  }
+
+  .glow{
+    position:fixed;
+    top:-20%;
+    left:50%;
+    transform:translateX(-50%);
+    width:140vw;
+    height:60vh;
+    background:radial-gradient(ellipse at center, rgba(255,61,127,0.18), transparent 65%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .wrap{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:460px;
+  }
+
+  header{
+    text-align:center;
+    margin-bottom:40px;
+  }
+
+  .presents{
+    font-size:11px;
+    letter-spacing:0.35em;
+    text-transform:uppercase;
+    color:var(--grey);
+    margin:0 0 10px;
+  }
+
+  h1{
+    font-family:'Anton', sans-serif;
+    font-weight:400;
+    font-size:clamp(48px, 15vw, 68px);
+    line-height:0.85;
+    letter-spacing:0.01em;
+    margin:0 0 14px;
+    color:var(--paper);
+    text-transform:uppercase;
+    position:relative;
+    display:inline-block;
+  }
+  h1::after{
+    content:"";
+    position:absolute;
+    left:6%;
+    right:6%;
+    bottom:-6px;
+    height:6px;
+    background:var(--hot-pink);
+    transform:skewX(-8deg);
+  }
+
+  .tagline{
+    font-size:12px;
+    color:var(--punk-pink);
+    letter-spacing:0.06em;
+    margin:18px 0 0;
+  }
+
+  /* ticket-stub style link cards */
+  .links{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+
+  .ticket{
+    display:block;
+    text-decoration:none;
+    color:inherit;
+    position:relative;
+    border:1.5px solid var(--paper);
+    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
+    padding:18px 20px;
+    transition:transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .ticket:hover, .ticket:focus-visible{
+    transform:translate(-3px,-3px);
+    background:rgba(240,168,196,0.08);
+    border-color:var(--hot-pink);
+    outline:none;
+  }
+
+  .ticket:focus-visible{
+    outline:2px solid var(--hot-pink);
+    outline-offset:3px;
+  }
+
+  /* perforated edge notches */
+  .ticket::before, .ticket::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:14px;
+    height:14px;
+    background:var(--ink);
+    border:1.5px solid var(--paper);
+    border-radius:50%;
+  }
+  .ticket::before{ left:-8px; }
+  .ticket::after{ right:-8px; }
+
+  .eyebrow{
+    font-size:10px;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:var(--hot-pink);
+    margin:0 0 6px;
+  }
+
+  .event-name{
+    font-family:'Anton', sans-serif;
+    font-size:22px;
+    line-height:1.05;
+    text-transform:uppercase;
+    letter-spacing:0.01em;
+    margin:0 0 8px;
+  }
+
+  .meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:4px 14px;
+    font-size:11.5px;
+    color:var(--grey);
+  }
+
+  .meta span{ white-space:nowrap; }
+
+  .arrow{
+    position:absolute;
+    right:20px;
+    bottom:16px;
+    font-size:11px;
+    letter-spacing:0.1em;
+    color:var(--punk-pink);
+  }
+
+  .socials{
+    display:flex;
+    justify-content:center;
+    gap:14px;
+    margin-top:36px;
+  }
+
+  .social-link{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    text-decoration:none;
+    color:var(--paper);
+    border:1.5px solid var(--line);
+    padding:10px 18px;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    transition:transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .social-link:hover, .social-link:focus-visible{
+    transform:translate(-2px,-2px);
+    border-color:var(--hot-pink);
+    color:var(--punk-pink);
+    outline:none;
+  }
+
+  .social-link svg{
+    width:15px;
+    height:15px;
+    flex-shrink:0;
+  }
+
+  footer{
+    text-align:center;
+    margin-top:32px;
+  }
+
+  .brand{
+    font-family:'Anton', sans-serif;
+    font-size:13px;
+    letter-spacing:0.25em;
+    text-transform:uppercase;
+    color:var(--grey);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .grain{ animation:none; }
+  }
+
+  @media (max-width:380px){
+    .event-name{ font-size:19px; }
+  }
+</style>
+</head>
+<body>
+  <div class="grain"></div>
+  <div class="glow"></div>
+
+  <div class="wrap">
+    <header>
+      <p class="presents">Outlier Noise Presents</p>
+      <h1>Tickets</h1>
+      <p class="tagline">Promoting the Outliers of Noise</p>
+    </header>
+
+    <ul class="links">
+      <li>
+        <a class="ticket" href="https://www.skiddle.com/e/42282527" target="_blank" rel="noopener">
+          <p class="eyebrow">Sun 11 Oct 2026 · Gullivers</p>
+          <p class="event-name">HAWXX / Omoia / Strange Woman</p>
+          <div class="meta">
+            <span>Feminist punk metal + queer emo + trans rock&nbsp;'n'&nbsp;roll</span>
+          </div>
+          <span class="arrow">GET TICKETS →</span>
+        </a>
+      </li>
+      <li>
+        <a class="ticket" href="https://www.skiddle.com/e/42400062" target="_blank" rel="noopener">
+          <p class="eyebrow">Sun 8 Nov 2026 · Star &amp; Garter</p>
+          <p class="event-name">Black Orchid Empire / Terminals + Support</p>
+          <div class="meta">
+            <span>Groove prog + heavy groove</span>
+          </div>
+          <span class="arrow">GET TICKETS →</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="socials">
+      <a class="social-link" href="https://www.instagram.com/outliernoisepromo/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>
+        Instagram
+      </a>
+      <a class="social-link" href="https://www.facebook.com/profile.php?id=61591215729590" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 8h-2a2 2 0 0 0-2 2v2H9v3h2v6h3v-6h2.2l.8-3H14v-1.5c0-.5.3-1 .9-1H16V8z"/></svg>
+        Facebook
+      </a>
+    </div>
+
+    <footer>
+      <p class="brand">Outlier Noise</p>
+    </footer>
+  </div>
+</body>
+</html>
